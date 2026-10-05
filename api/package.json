@@ -16,5 +16,8 @@
     "hono": "4.13.13",
     "pg-boss": "12.36.0",
     "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@testcontainers/postgresql": "12.2.0"
   }
 }

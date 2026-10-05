@@ -14,10 +14,10 @@ The CLI shows progress to the user and can detach / attach without killing the i
 A few things could be better:
 
 - `--filter` has not been implemented for the CLI.
-- The rate limiting for the analytics worker is a bit ugly. We add a constant 500ms as we don't really handle the 429s elegantly and instead incur a 10s penalty if one happens. This _works_, but the whole pipeline could be ~5% faster.
+- The rate limiting for the analytics worker is a bit ugly. We add a constant 500ms as we don't really handle the `429` elegantly and instead incur a 10s penalty if one happens. This _works_, but the whole pipeline could be ~5% faster.
 - Although it's possible with Bun, the CLI bundle step into an executable binary is not configured.
-- I did not add full end-to-end tests and the coverage could be a lot better in general. I did not want to commit slop tests just to add more coverage.
-- I did not get to test the dead letter queues as the system works. :P
+- I did not add full end-to-end tests; only a small set of integration tests around the API.
+- I did not get to test the dead letter queues as the system works. :)
 
 ## Development
 

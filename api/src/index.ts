@@ -7,6 +7,8 @@ import { startPipeline } from "./pipeline/index.ts";
 const environment = parseEnvironment(Bun.env);
 const database = new SQL(environment.DATABASE_URL);
 const pipeline = await startPipeline(database, {
+  analyticsRateLimitIntervalMs:
+    environment.HEYERING_ANALYTICS_RATE_LIMIT_INTERVAL_MS,
   enrichmentConcurrency: environment.ENRICHMENT_CONCURRENCY,
   heyeringApiToken: environment.HEYERING_API_TOKEN,
   heyeringApiUrl: environment.HEYERING_API_URL,

@@ -11,6 +11,10 @@ const environmentSchema = z.object({
   API_PORT: z.coerce.number().int().min(1).max(65_535),
   DATABASE_URL: z.url(),
   ENRICHMENT_CONCURRENCY: z.coerce.number().int().min(1).max(100),
+  HEYERING_ANALYTICS_RATE_LIMIT_INTERVAL_MS: z.coerce
+    .number()
+    .int()
+    .nonnegative(),
   HEYERING_API_TOKEN: z.string().trim().min(1),
   HEYERING_API_URL: z.url(),
   HEYERING_REQUEST_TIMEOUT_MS: z.coerce.number().int().positive(),

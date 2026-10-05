@@ -16,6 +16,7 @@ import {
 } from "./queue-data.ts";
 
 export interface PipelineOptions {
+  analyticsRateLimitIntervalMs: number;
   enrichmentConcurrency: number;
   requestTimeoutMs: number;
 }
@@ -56,8 +57,8 @@ export async function registerPipelineWorkers(
     {
       batchSize: 20,
       localConcurrency: 1,
-      // HACK: a more advanced rate limiting should be used here for better throughput
-      pollingIntervalSeconds: 10.5,
+      pollingIntervalSeconds:
+        (options.analyticsRateLimitIntervalMs + RATE_LIMIT_BUFFER_MS) / 1_000,
     },
     async function (jobs) {
       const signal = combineJobSignals(jobs);
@@ -131,6 +132,8 @@ async function createQueues(boss: PgBoss) {
     retryLimit: 5,
   });
 }
+
+const RATE_LIMIT_BUFFER_MS = 500;
 
 function combineJobSignals<Data extends PipelineJobData>(
   jobs: readonly Job<Data>[],

@@ -19,6 +19,7 @@ Go would have been a good - arguably better - choice here too. One key advantage
 - `oxlint`/`oxfmt` as linter and formatter
 - `dbmate` for database migrations
 - `docker (+ compose)` for development. We only dockerize the API dependencies (e.g. Postgres) so we can use simple `localhost`-based development for the API while retaining the benefits of a dockerized development setup.
+- `@testcontainers` to easily integration test against a real PostgreSQL database.
 
 ### Libraries
 

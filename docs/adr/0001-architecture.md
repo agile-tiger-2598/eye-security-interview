@@ -14,7 +14,7 @@ The following observations and assumptions guided this design:
 - **Assumption**: The example workload (1.000 rows / upload) is representative. We don't expect millions or billions of events per import.
 - **Assumption**: The analytics service de-duplicates events. We can send the same event (by id) twice.
 - **Assumption**: Record ordering does not have to be preserved.
-- **Assumption**: Event ids are locally unique, but not globally as they are integer ids.
+- **Assumption**: Event IDs are locally unique, but not globally unique over time. They are integers that can wrap and be reused for different events later.
 
 ## Decision
 

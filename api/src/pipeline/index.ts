@@ -14,6 +14,7 @@ export interface Pipeline {
 }
 
 export interface PipelineOptions {
+  analyticsRateLimitIntervalMs: number;
   enrichmentConcurrency: number;
   heyeringApiToken: string;
   heyeringApiUrl: string | URL;
@@ -56,6 +57,7 @@ export async function startPipeline(
     });
 
     await registerPipelineWorkers(database, boss, client, {
+      analyticsRateLimitIntervalMs: options.analyticsRateLimitIntervalMs,
       enrichmentConcurrency: options.enrichmentConcurrency,
       requestTimeoutMs: options.requestTimeoutMs,
     });
