@@ -49,11 +49,11 @@ async function executeUpload(csvFile: string, noWait: boolean) {
   let jobId: string;
 
   try {
-    const { csv, invalidRecordCount, validRecordCount } =
+    const { csv, invalidRecordIds, validRecordCount } =
       await readValidCsv(csvFile);
 
-    if (invalidRecordCount > 0) {
-      spinner.info(formatIgnoredRecords(invalidRecordCount));
+    if (invalidRecordIds.length) {
+      spinner.info(formatIgnoredRecords(invalidRecordIds));
     }
 
     spinner.start(`Uploading ${validRecordCount} records...`);
@@ -66,9 +66,10 @@ async function executeUpload(csvFile: string, noWait: boolean) {
     throw error;
   }
 
-  console.log(`Job ID: ${jobId}`);
-
-  if (noWait) return;
+  if (noWait) {
+    console.log(`Job ID: ${jobId}`);
+    return;
+  }
 
   await pollJobStatus(jobId);
 }
@@ -76,7 +77,7 @@ async function executeUpload(csvFile: string, noWait: boolean) {
 async function readValidCsv(csvFile: string) {
   // limitation: the filtered CSV is allocated in memory once.
   const csvRows: string[] = [];
-  let invalidRecordCount = 0;
+  const invalidRecordIds: string[] = [];
 
   const parsedRows = createReadStream(csvFile).pipe(
     parse({
@@ -90,8 +91,9 @@ async function readValidCsv(csvFile: string) {
       record_delimiter: "\n",
       rtrim: true,
       skip_records_with_error: true,
-      on_skip() {
-        invalidRecordCount += 1;
+      on_skip(_error, raw) {
+        const maybeId = raw?.split(";", 1);
+        invalidRecordIds.push(maybeId?.[0] ?? "invalid-record-id");
       },
     }),
   );
@@ -100,7 +102,7 @@ async function readValidCsv(csvFile: string) {
 
   for await (const row of parsedRows) {
     if (!ActivityLog.safeParse(row.record).success) {
-      invalidRecordCount += 1;
+      invalidRecordIds.push(row.record.id);
       continue;
     }
 
@@ -110,11 +112,12 @@ async function readValidCsv(csvFile: string) {
 
   return {
     csv: csvRows.join(""),
-    invalidRecordCount,
+    invalidRecordIds,
     validRecordCount,
   };
 }
 
-function formatIgnoredRecords(count: number) {
-  return `Ignored ${count} invalid record${count === 1 ? "" : "s"}.`;
+function formatIgnoredRecords(ids: readonly string[]) {
+  const count = ids.length;
+  return `Ignored ${count} invalid record${count === 1 ? "" : "s"} (IDs: ${ids.join(", ")}).`;
 }

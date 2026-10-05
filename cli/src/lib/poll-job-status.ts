@@ -4,7 +4,12 @@ import yoctoSpinner from "yocto-spinner";
 import { pollStatus } from "./api-client.ts";
 
 export async function pollJobStatus(jobId: string, signal?: AbortSignal) {
-  const spinner = yoctoSpinner({ text: `Waiting for job ${jobId}...` }).start();
+  console.log(`Job ID: ${jobId}`);
+  console.log(
+    `Press Ctrl+c to safely detach. Use \`status ${jobId}\` to re-attach.`,
+  );
+
+  const spinner = yoctoSpinner({ text: `Loading job info...` }).start();
 
   try {
     const result = await pollStatus(jobId, signal, (status) => {
@@ -26,9 +31,9 @@ export async function pollJobStatus(jobId: string, signal?: AbortSignal) {
 
 function formatProgress(status: UploadStatusResponse) {
   const processedRecords = status.successful_records + status.failed_records;
-  return `Job ${status.job_id} (${status.status}): ${processedRecords}/${status.total_records} processed.`;
+  return `${status.status}: ${processedRecords}/${status.total_records} processed.`;
 }
 
 function formatResult(status: UploadStatusResponse) {
-  return `Job ${status.job_id} (${status.status}): ${status.successful_records} successful, ${status.failed_records} failed.`;
+  return `${status.status}: ${status.successful_records} successful, ${status.failed_records} failed.`;
 }

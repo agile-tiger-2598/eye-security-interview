@@ -18,6 +18,7 @@
       "version": "0.0.0",
       "dependencies": {
         "@eye-security-interview/contracts": "workspace:*",
+        "csv-parse": "catalog:",
         "dbmate": "2.36.0",
         "hono": "4.13.13",
         "zod": "catalog:",
@@ -28,7 +29,7 @@
       "version": "0.0.0",
       "dependencies": {
         "@eye-security-interview/contracts": "workspace:*",
-        "csv-parse": "7.0.3",
+        "csv-parse": "catalog:",
         "yocto-spinner": "1.2.2",
         "zod": "catalog:",
       },
@@ -42,6 +43,7 @@
     },
   },
   "catalog": {
+    "csv-parse": "7.0.3",
     "zod": "4.6.5",
   },
   "packages": {

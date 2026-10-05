@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@eye-security-interview/contracts": "workspace:*",
+    "csv-parse": "catalog:",
     "dbmate": "2.36.0",
     "hono": "4.13.13",
     "zod": "catalog:"

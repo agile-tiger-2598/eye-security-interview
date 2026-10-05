@@ -1,8 +1,12 @@
+import { SQL } from "bun";
+
 import { createApp } from "./app.ts";
 import { parseEnvironment } from "./lib/config.ts";
 
 const environment = parseEnvironment(Bun.env);
-const app = createApp();
+const database = new SQL(environment.DATABASE_URL);
+
+const app = createApp(environment, database);
 
 const server = Bun.serve({
   fetch: app.fetch,

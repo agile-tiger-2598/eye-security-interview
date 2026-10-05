@@ -22,8 +22,9 @@ cp cli/.env_example cli/.env
 ### Develop
 
 ```sh
-# start the database
+# start the database and apply pending migrations
 bun run db:up
+bun run dbmate up
 
 # start the backend
 bun run api:dev
@@ -45,20 +46,21 @@ bun run cli upload docs/example_data.csv
 The API reads its settings from `api/.env`. It listens on `API_HOST` and
 `API_PORT`. The default address is `http://127.0.0.1:3000`.
 
-The liveness endpoint is `GET /health`.
+The liveness endpoint is `GET /healthz`.
 
 ## Development commands
 
-| Command                         | Action                                   |
-| ------------------------------- | ---------------------------------------- |
-| `bun run api:dev`               | Run the API and restart it after changes |
-| `bun run api:start`             | Run the API                              |
-| `bun run cli`                   | Run the CLI                              |
-| `bun run check`                 | Type-check each workspace                |
-| `bun run format`                | Format supported project files           |
-| `bun run format:check`          | Check formatting without changing files  |
-| `bun run lint`                  | Lint the project                         |
-| `bun run test`                  | Run all Bun tests                        |
-| `bun run db:up`                 | Start PostgreSQL and wait for health     |
-| `bun run db:down`               | Stop PostgreSQL and preserve its data    |
-| `bun run --cwd api dbmate -- …` | Run dbmate for the API                   |
+| Command                | Action                                   |
+| ---------------------- | ---------------------------------------- |
+| `bun run api:dev`      | Run the API and restart it after changes |
+| `bun run api:start`    | Run the API                              |
+| `bun run cli`          | Run the CLI                              |
+| `bun run check`        | Type-check each workspace                |
+| `bun run format`       | Format supported project files           |
+| `bun run format:check` | Check formatting without changing files  |
+| `bun run lint`         | Lint the project                         |
+| `bun run test`         | Run all Bun tests                        |
+| `bun run db:up`        | Start PostgreSQL and wait for health     |
+| `bun run db:down`      | Stop PostgreSQL and preserve its data    |
+| `bun run dbmate up`    | Apply pending API database migrations    |
+| `bun run dbmate ...`   | Run another dbmate command               |

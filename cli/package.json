@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@eye-security-interview/contracts": "workspace:*",
-    "csv-parse": "7.0.3",
+    "csv-parse": "catalog:",
     "yocto-spinner": "1.2.2",
     "zod": "catalog:"
   }

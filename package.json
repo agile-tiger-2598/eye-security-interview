@@ -12,8 +12,9 @@
     "api:start": "bun run --filter @eye-security-interview/api start",
     "check": "bun run --workspaces check",
     "cli": "bun run --env-file=cli/.env cli/src/index.ts",
-    "db:down": "docker compose --env-file api/.env down",
-    "db:up": "docker compose --env-file api/.env up --detach --wait postgres",
+    "db:down": "docker compose down",
+    "db:up": "docker compose up --detach --wait postgres",
+    "dbmate": "bun run --cwd api dbmate --",
     "format": "oxfmt .",
     "format:check": "oxfmt --check .",
     "lint": "oxlint --deny-warnings .",
@@ -28,6 +29,7 @@
     "typescript": "7.0.2"
   },
   "catalog": {
+    "csv-parse": "7.0.3",
     "zod": "4.6.5"
   }
 }
