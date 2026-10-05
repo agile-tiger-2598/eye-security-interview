@@ -1,0 +1,13 @@
+{
+  "name": "@eye-security-interview/cli",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "tsc --noEmit --project tsconfig.json",
+    "start": "bun run src/index.ts"
+  },
+  "dependencies": {
+    "@eye-security-interview/contracts": "workspace:*"
+  }
+}
