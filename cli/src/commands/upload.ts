@@ -78,6 +78,7 @@ async function readValidCsv(csvFile: string) {
   // limitation: the filtered CSV is allocated in memory once.
   const csvRows: string[] = [];
   const invalidRecordIds: string[] = [];
+  const recordIds = new Set<number>();
 
   const parsedRows = createReadStream(csvFile).pipe(
     parse({
@@ -101,11 +102,14 @@ async function readValidCsv(csvFile: string) {
   let validRecordCount = 0;
 
   for await (const row of parsedRows) {
-    if (!ActivityLog.safeParse(row.record).success) {
+    const result = ActivityLog.safeParse(row.record);
+
+    if (!result.success || recordIds.has(result.data.id)) {
       invalidRecordIds.push(row.record.id);
       continue;
     }
 
+    recordIds.add(result.data.id);
     csvRows.push(row.raw);
     validRecordCount += 1;
   }

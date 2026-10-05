@@ -25,3 +25,5 @@ Go would have been a good - arguably better - choice here too. One key advantage
 - `zod` as runtime schema validation
 - `hono` as API framework
 - `pg-boss` as a Postgres-based job queue
+- `parse-csv` as CSV parser with stream support
+- `yocto-spinner` as a tiny terminal spinner

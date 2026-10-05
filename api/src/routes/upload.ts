@@ -1,20 +1,22 @@
 import { Readable } from "node:stream";
 
-import type { SQL } from "bun";
-import { ActivityLog } from "@eye-security-interview/contracts";
+import {
+  ActivityLog,
+  type ActivityLog as ActivityLogData,
+} from "@eye-security-interview/contracts";
 import { CsvError, parse } from "csv-parse";
 import type { Handler, MiddlewareHandler } from "hono";
 import { bodyLimit } from "hono/body-limit";
 
 import type { Environment } from "../lib/config.ts";
-import { createImport } from "../lib/queries.ts";
+import type { ImportProducer } from "../pipeline/import-producer.ts";
 
 class InvalidUploadError extends Error {}
 class UploadRecordLimitError extends Error {}
 
 export function upload(
   environment: Environment,
-  sql: SQL,
+  imports: ImportProducer,
 ): [MiddlewareHandler, Handler] {
   return [
     bodyLimit({
@@ -29,10 +31,10 @@ export function upload(
       },
     }),
     async function uploadHandler(c) {
-      let totalRecords: number;
+      let records: readonly ActivityLogData[];
 
       try {
-        totalRecords = await countActivityLogs(
+        records = await parseActivityLogs(
           c.req.raw,
           environment.UPLOAD_RECORD_LIMIT,
         );
@@ -48,13 +50,13 @@ export function upload(
         throw error;
       }
 
-      const response = await createImport(sql, totalRecords);
+      const response = await imports.submit(records);
       return c.json(response, 202);
     },
   ];
 }
 
-async function countActivityLogs(request: Request, recordLimit: number) {
+async function parseActivityLogs(request: Request, recordLimit: number) {
   if (!request.body) {
     throw new InvalidUploadError("CSV body is required");
   }
@@ -66,27 +68,37 @@ async function countActivityLogs(request: Request, recordLimit: number) {
       delimiter: ";",
     }),
   );
-  let totalRecords = 0;
+  const records: ActivityLogData[] = [];
+  const recordIds = new Set<number>();
 
   for await (const row of rows) {
-    if (totalRecords >= recordLimit) {
+    if (records.length >= recordLimit) {
       throw new UploadRecordLimitError(
         `CSV cannot contain more than ${recordLimit} records`,
       );
     }
 
-    if (!ActivityLog.safeParse(row).success) {
+    const result = ActivityLog.safeParse(row);
+
+    if (!result.success) {
       throw new InvalidUploadError(
-        `CSV record ${totalRecords + 1} does not match the activity log contract`,
+        `CSV record ${records.length + 1} does not match the activity log contract`,
       );
     }
 
-    totalRecords += 1;
+    if (recordIds.has(result.data.id)) {
+      throw new InvalidUploadError(
+        `CSV contains duplicate record id ${result.data.id}`,
+      );
+    }
+
+    recordIds.add(result.data.id);
+    records.push(result.data);
   }
 
-  if (totalRecords === 0) {
+  if (!records.length) {
     throw new InvalidUploadError("CSV must contain at least one record");
   }
 
-  return totalRecords;
+  return records;
 }

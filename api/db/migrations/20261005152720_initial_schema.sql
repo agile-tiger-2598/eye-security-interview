@@ -24,6 +24,11 @@ CREATE TABLE import_failures (
     payload jsonb NOT NULL,
     reason text NOT NULL,
     created_at timestamp with time zone NOT NULL DEFAULT now(),
+    CONSTRAINT import_failures_record_stage_unique UNIQUE (
+        import_id,
+        record_id,
+        stage
+    ),
     CONSTRAINT import_failures_record_id_nonempty CHECK (
         btrim(record_id) <> ''
     ),

@@ -14,6 +14,7 @@
     "csv-parse": "catalog:",
     "dbmate": "2.36.0",
     "hono": "4.13.13",
+    "pg-boss": "12.36.0",
     "zod": "catalog:"
   }
 }

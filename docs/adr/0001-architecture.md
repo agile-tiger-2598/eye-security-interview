@@ -1,5 +1,5 @@
 ---
-title: Architecture
+title: Initial architecture
 status: accepted
 date: 2026-10-04
 deciders: ["Felix Spöttel"]

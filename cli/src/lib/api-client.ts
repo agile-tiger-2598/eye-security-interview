@@ -4,6 +4,7 @@ import {
   UploadResponse,
   UploadStatusResponse,
 } from "@eye-security-interview/contracts";
+import { z } from "zod";
 
 import { environment } from "./config.ts";
 
@@ -47,13 +48,20 @@ export async function pollStatus(
 class ApiClientError extends Error {}
 
 async function readResponse(response: Response) {
+  const body: unknown = await response.json();
+
   if (!response.ok) {
-    await response.body?.cancel();
+    const error = ApiErrorResponse.safeParse(body);
+    const detail = error.success ? `: ${error.data.error}` : "";
+
     throw new ApiClientError(
-      `API request failed with status ${response.status}`,
+      `API request failed with status ${response.status}${detail}`,
     );
   }
 
-  const body: unknown = await response.json();
   return body;
 }
+
+const ApiErrorResponse = z.object({
+  error: z.string(),
+});
