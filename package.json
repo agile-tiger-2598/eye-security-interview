@@ -11,7 +11,7 @@
     "api:dev": "bun run --filter @eye-security-interview/api dev",
     "api:start": "bun run --filter @eye-security-interview/api start",
     "check": "bun run --workspaces check",
-    "cli": "bun run --filter @eye-security-interview/cli start",
+    "cli": "bun run --env-file=cli/.env cli/src/index.ts",
     "db:down": "docker compose --env-file api/.env down",
     "db:up": "docker compose --env-file api/.env up --detach --wait postgres",
     "format": "oxfmt .",

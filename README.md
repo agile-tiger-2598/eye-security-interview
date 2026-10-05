@@ -16,6 +16,7 @@
 ```sh
 bun install --frozen-lockfile
 cp api/.env_example api/.env
+cp cli/.env_example cli/.env
 ```
 
 ### Develop
@@ -27,8 +28,8 @@ bun run db:up
 # start the backend
 bun run api:dev
 
-# call the development CLI
-bun run cli example.csv
+# terminal #2: call the development CLI
+bun run cli upload docs/example_data.csv
 ```
 
 ### Workspaces

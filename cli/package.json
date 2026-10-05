@@ -4,10 +4,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "check": "tsc --noEmit --project tsconfig.json",
-    "start": "bun run src/index.ts"
+    "check": "tsc --noEmit --project tsconfig.json"
   },
   "dependencies": {
-    "@eye-security-interview/contracts": "workspace:*"
+    "@eye-security-interview/contracts": "workspace:*",
+    "csv-parse": "7.0.3",
+    "yocto-spinner": "1.2.2",
+    "zod": "catalog:"
   }
 }

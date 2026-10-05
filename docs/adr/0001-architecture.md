@@ -25,10 +25,18 @@ The following observations and assumptions guided this design:
 
 ### API
 
-- The API shall be a stateful, **asynchronous** service. Given the high processing times, it does not make sense that the CLI keeps a socket open and waits for processing to complete, so a synchronous design does not hold up.
-- The API shall return a job id for a successfully submitted workload that can be used to poll for processing state.
-- The processing shall be implemented via worker queues that implement bounded retries. The enrichment queue shall run with limited concurrency. The analytics queue shall use a rate limiter internally.
-- The load is small enough that we can run this with a Postgres-based queuing solution (pgmq, pgboss) and do not need an external piece of infrastructure such as Kafka or RabbitMQ. This has a key advantage that the job record and all related jobs can be created in an atomic transaction, which allows for easy service recoverability and atomicity guarantese.
+- The API shall be a stateful, **asynchronous** service.
+  - Given the high processing times, it does not make sense that the CLI keeps a socket open and waits for processing to complete, so a synchronous design does not hold up.
+- The API shall use CSV as the accepted wire format for uploads as it is streamable and matches the CLI-supported format.
+- The API shall return a `job_id` for a successfully submitted workload that can be used to poll for processing state.
+- The API should parse provided data at the service boundary and fail fast on encountering invalid data.
+- The API shall not trust submitted data and verify it.
+- The API shall only store permanent records for processed jobs and processing failures; successfully processed records do not need to be stored as they are available via the analytics service.
+
+- Processing shall be implemented via worker queues and implement bounded retries.
+- The enrichment queue shall run with limited concurrency.
+- The analytics queue shall use a rate limiter internally.
+- The load is small enough that we can run this with a Postgres-based queuing solution (pgmq, pg-boss) and do not need an external piece of infrastructure such as Kafka or RabbitMQ. This has a key advantage that the job record and all related jobs can be created in an atomic transaction, which allows for easy service recoverability and offers atomicity guarantese.
 
 See the following diagram for a high-level overview of the processing flow:
 
@@ -53,10 +61,6 @@ flowchart LR
 
     A -->|Check import status| B
 ```
-
-- The API should parse provided data at the service boundary and fail fast on encountering invalid data.
-- The API shall not trust submitted data but verify it again.
-- The API shall only store permanent records for processed jobs and processing failures; successfully processed records do not need to be stored as they are available via the analytics service.
 
 The following high-level database schema is proposed:
 
